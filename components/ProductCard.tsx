@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link"; // Tambahan: Import Link untuk pindah halaman
 import { Product } from "@/lib/types";
 
 export default function ProductCard({ product }: { product: Product }) {
@@ -10,8 +11,13 @@ export default function ProductCard({ product }: { product: Product }) {
   }).format(product.price);
 
   return (
-    <div className="group flex flex-col bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100">
-      {/* Area Gambar dengan aksen Soft Pink di belakangnya jika transparan */}
+    // 1. Tag <div> terluar diganti jadi <Link> biar seluruh kartu bisa diklik
+    // 2. "bg-white" diganti jadi "bg-ivory" sesuai request Bu Triana
+    <Link 
+      href={`/product/${product.id}`} 
+      className="group flex flex-col bg-ivory rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 cursor-pointer"
+    >
+      {/* Area Gambar */}
       <div className="relative w-full aspect-square bg-soft-pink/20 overflow-hidden">
         <Image
           src={product.image_url}
@@ -35,11 +41,12 @@ export default function ProductCard({ product }: { product: Product }) {
           <span className="text-gold font-bold text-lg">
             {formattedPrice}
           </span>
-          <button className="bg-gold hover:bg-gold-hover text-white text-sm font-medium px-4 py-2 rounded-full transition-colors shadow-sm">
+          {/* Tag <button> diganti <div> agar tidak error saat dibungkus <Link> */}
+          <div className="bg-gold group-hover:bg-gold-hover text-white text-sm font-medium px-4 py-2 rounded-full transition-colors shadow-sm">
             Beli
-          </button>
+          </div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }

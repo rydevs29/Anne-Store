@@ -1,8 +1,7 @@
 import ProductCard from "@/components/ProductCard";
 import { Product } from "@/lib/types";
 
-// Nanti ini diganti dengan fetch data dari Supabase.
-// Ini data dummy sementara agar UI bisa langsung terlihat.
+// JANGAN DIHAPUS: Ini data dummy sementara agar UI terlihat ada isinya
 const dummyProducts: Product[] = [
   {
     id: "1",
@@ -32,16 +31,19 @@ const dummyProducts: Product[] = [
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-ivory text-dark-gray font-sans selection:bg-soft-pink selection:text-dark-gray">
+    // Background utama diubah jadi Pink (bg-soft-pink)
+    <main className="min-h-screen bg-soft-pink text-dark-gray font-sans">
       
       {/* Header / Hero Section */}
-      <header className="bg-white shadow-sm sticky top-0 z-50">
+      <header className="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex justify-between items-center">
-          <h1 className="text-2xl font-bold tracking-tight text-dark-gray">
-            Anne<span className="text-gold">Store</span>.
+          {/* Logo dengan font feminim (serif), miring (italic), dan TANPA titik */}
+          <h1 className="text-3xl font-serif tracking-tight text-dark-gray italic">
+            Anne <span className="text-gold">Store</span>
           </h1>
           <nav>
-            <button className="text-sm font-medium bg-soft-pink/30 text-dark-gray px-4 py-2 rounded-full hover:bg-soft-pink/50 transition-colors">
+            {/* Tombol Keranjang warna Emas (Gold) */}
+            <button className="bg-gold hover:bg-gold-hover text-white px-5 py-2 rounded-full text-sm font-bold shadow-md transition-all">
               Keranjang (0)
             </button>
           </nav>
@@ -51,15 +53,16 @@ export default function Home() {
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-extrabold mb-4">
+          {/* Font judul juga diubah jadi serif agar lebih feminim */}
+          <h2 className="text-3xl md:text-4xl font-serif mb-4">
             Temukan Barang Favoritmu
           </h2>
-          <p className="text-gray-500 max-w-2xl mx-auto">
+          <p className="text-gray-600 italic max-w-2xl mx-auto">
             Koleksi barang-barang estetik dan berkualitas yang dipilih langsung untuk melengkapi gaya hidupmu.
           </p>
         </div>
 
-        {/* Product Grid - Responsif */}
+        {/* Product Grid - Tetap memanggil komponen ProductCard */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
           {dummyProducts.map((product) => (
             <ProductCard key={product.id} product={product} />

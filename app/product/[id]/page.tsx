@@ -1,45 +1,34 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Product } from "@/lib/types";
+import { supabase } from "@/lib/supabase";
 
-// Kita gunakan data dummy yang sama agar produknya bisa ditemukan
-const dummyProducts: Product[] = [
-  {
-    id: "1",
-    name: "Aesthetic Desk Lamp",
-    price: 150000,
-    description: "Lampu meja minimalis dengan cahaya hangat, cocok untuk dekorasi kamar atau meja kerjaku. Material premium yang kokoh dengan desain modern.",
-    image_url: "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?q=80&w=800&auto=format&fit=crop",
-    stock: 10,
-  },
-  {
-    id: "2",
-    name: "Scented Candle - Vanilla",
-    price: 85000,
-    description: "Lilin aromaterapi dengan wangi vanilla yang menenangkan. Terbuat dari bahan alami yang aman, cocok untuk teman bersantai di malam hari.",
-    image_url: "https://images.unsplash.com/photo-1603006905003-be475563bc59?q=80&w=800&auto=format&fit=crop",
-    stock: 15,
-  },
-  {
-    id: "3",
-    name: "Ceramic Mug",
-    price: 65000,
-    description: "Gelas keramik bergaya rustic untuk menemani ngopi pagi. Desain estetik dan tebal, menjaga suhu minuman lebih lama.",
-    image_url: "https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?q=80&w=800&auto=format&fit=crop",
-    stock: 20,
-  },
-];
+// Supaya data selalu fresh dan tidak cache
+export const revalidate = 0;
 
-export default function ProductDetail({ params }: { params: { id: string } }) {
-  // Mencari data produk yang diklik berdasarkan ID di URL
-  const product = dummyProducts.find((p) => p.id === params.id);
+async function getProduct(id: string) {
+  const { data: product, error } = await supabase
+    .from("products")
+    .select("*")
+    .eq("id", id)
+    .single();
 
-  // Jika ID asal-asalan diketik di URL, tampilkan halaman ini
+  if (error) {
+    console.error("Error fetching product:", error);
+    return null;
+  }
+  return product;
+}
+
+export default async function ProductDetail({ params }: { params: { id: string } }) {
+  const product = await getProduct(params.id);
+
+  // Jika produk tidak ditemukan di database
   if (!product) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-soft-pink text-dark-gray">
-        <h1 className="text-3xl font-serif mb-4">Produk Tidak Ditemukan</h1>
-        <Link href="/" className="px-6 py-2 bg-gold text-white rounded-full hover:bg-gold-hover transition-colors">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-soft-pink text-dark-gray px-4">
+        <h1 className="text-3xl font-serif mb-4 text-center">Produk Tidak Ditemukan</h1>
+        <p className="mb-8 text-gray-600 italic">Mungkin produk sudah dihapus atau link salah.</p>
+        <Link href="/" className="px-8 py-3 bg-gold text-white rounded-full hover:bg-gold-hover transition-all shadow-md font-bold">
           Kembali ke Beranda
         </Link>
       </div>
@@ -63,9 +52,7 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
           <h1 className="text-2xl font-serif tracking-tight text-dark-gray italic">
             Anne <span className="text-gold">Store</span>
           </h1>
-          <Link href="/checkout" className="text-sm font-medium hover:text-gold transition-colors">
-            Keranjang
-          </Link>
+          <div className="w-10"></div> {/* Spacer */}
         </div>
       </header>
 
@@ -101,19 +88,18 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
             </p>
             
             <div className="bg-white/50 rounded-xl p-5 mb-8 border border-gray-100">
-              <h3 className="font-bold text-sm mb-2 text-dark-gray">Deskripsi</h3>
-              <p className="text-gray-600 leading-relaxed">
+              <h3 className="font-bold text-sm mb-2 text-dark-gray uppercase tracking-widest">Deskripsi</h3>
+              <p className="text-gray-600 leading-relaxed italic">
                 {product.description}
               </p>
             </div>
 
-            <div className="mt-auto flex gap-4">
-              {/* Tombol Utama yang Mengarah ke Checkout */}
+            <div className="mt-auto">
               <Link 
                 href="/checkout"
-                className="flex-1 bg-gold hover:bg-gold-hover text-white text-center font-bold py-4 rounded-xl shadow-md transition-all transform hover:-translate-y-1"
+                className="block w-full bg-gold hover:bg-gold-hover text-white text-center font-bold py-4 rounded-xl shadow-md transition-all transform hover:-translate-y-1"
               >
-                Beli Sekarang
+                Pesan Sekarang
               </Link>
             </div>
           </div>
